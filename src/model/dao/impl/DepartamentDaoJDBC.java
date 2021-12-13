@@ -10,26 +10,26 @@ import java.util.List;
 
 import db.DB;
 import db.DbException;
-import model.dao.DepartmentDao;
-import model.entities.Department;
+import model.dao.DepartamentDao;
+import model.entities.Departament;
 import model.entities.Seller;
 
-public class DepartmentDaoJDBC implements DepartmentDao{
+public class DepartamentDaoJDBC implements DepartamentDao{
 	
 	private Connection conn;
 	
-	public DepartmentDaoJDBC ( Connection conn) {
+	public DepartamentDaoJDBC ( Connection conn) {
 		this.conn = conn;
 	}
 
 
 	@Override
-	public void insert(Department obj) {
+	public void insert(Departament obj) {
 		
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-					"INSERT INTO department "
+					"INSERT INTO departament "
 					+"(name) "
 					+ "VALUES"
 					+ "(?)",
@@ -63,11 +63,11 @@ public class DepartmentDaoJDBC implements DepartmentDao{
 	}
 
 	@Override
-	public void update(Department obj) {
+	public void update(Departament obj) {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-					"UPDATE department "
+					"UPDATE departament "
 					+ "SET name = ? WHERE id = ?");
 			
 			
@@ -91,7 +91,7 @@ public class DepartmentDaoJDBC implements DepartmentDao{
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-					"DELETE FROM department where id = ?");
+					"DELETE FROM departament where id = ?");
 			
 			st.setInt(1, id);
 			int rows = st.executeUpdate();
@@ -110,19 +110,19 @@ public class DepartmentDaoJDBC implements DepartmentDao{
 	}
 
 	@Override
-	public Department findById(Integer id) {
+	public Departament findById(Integer id) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"SELECT * FROM department WHERE  id = ?");
+					"SELECT * FROM departament WHERE  id = ?");
 			
 			st.setInt(1, id);
 			rs = st.executeQuery();
 			
 			if(rs.next()) {
 				
-				Department obj = instantiateDepartment(rs);
+				Departament obj = instantiateDepartament(rs);
 				
 				return obj;
 
@@ -138,8 +138,8 @@ public class DepartmentDaoJDBC implements DepartmentDao{
 	}
 
 
-	private Department instantiateDepartment(ResultSet rs) throws SQLException {
-		Department dep = new Department();
+	private Departament instantiateDepartament(ResultSet rs) throws SQLException {
+		Departament dep = new Departament();
 		dep.setId(rs.getInt("id"));
 		dep.setName(rs.getString("name"));
 		return dep;
@@ -147,22 +147,22 @@ public class DepartmentDaoJDBC implements DepartmentDao{
 
 
 	@Override
-	public List<Department> findAll() {
+	public List<Departament> findAll() {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"SELECT department.* FROM department ORDER BY name");
+					"SELECT departament.* FROM departament ORDER BY name");
 			
 			rs = st.executeQuery();
 			
-			List<Department> list = new ArrayList<>();
+			List<Departament> list = new ArrayList<>();
 			
 			while (rs.next()) {
 				
 			
 				
-				Department obj = instantiateDepartment(rs);
+				Departament obj = instantiateDepartament(rs);
 				
 				list.add(obj);
 

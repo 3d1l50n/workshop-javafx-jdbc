@@ -31,11 +31,12 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Seller;
+import model.services.DepartamentService;
 import model.services.SellerService;
 
 public class SellerListController implements Initializable, DataChangeListener {
 
-	private SellerService service;
+	private SellerService sellerService;
 
 	@FXML
 	private TableView<Seller> tableViewSeller;
@@ -72,7 +73,7 @@ public class SellerListController implements Initializable, DataChangeListener {
 	}
 
 	public void setSellerService(SellerService service) {
-		this.service = service;
+		this.sellerService = service;
 	}
 
 	@Override
@@ -99,10 +100,10 @@ public class SellerListController implements Initializable, DataChangeListener {
 	}
 
 	public void updateTableView() {
-		if (service == null) {
+		if (sellerService == null) {
 			throw new IllegalStateException("Service is null");
 		}
-		List<Seller> list = service.findAll();
+		List<Seller> list = sellerService.findAll();
 
 		obsList = FXCollections.observableArrayList(list);
 
@@ -120,7 +121,8 @@ public class SellerListController implements Initializable, DataChangeListener {
 	
 			SellerFormController controller = loader.getController();
 			controller.setSeller(obj);
-			controller.setSellerService(new SellerService());
+			controller.setServices(new SellerService(), new DepartamentService());
+			controller.loadAssociatedObjects();
 			controller.subscribeDataChangeListener(this);
 			controller.updateFormData();
     
@@ -133,6 +135,7 @@ public class SellerListController implements Initializable, DataChangeListener {
 			dialogStage.showAndWait();
     
 		} catch (IOException e) {
+			e.printStackTrace();
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -187,11 +190,11 @@ public class SellerListController implements Initializable, DataChangeListener {
 	private void removeEntity(Seller obj) {
 		Optional<ButtonType> result = Alerts.showConfirmation("Confirmation", "Are you sure to delete?");
 		if (result.get() == ButtonType.OK) {
-			if (service == null) {
+			if (sellerService == null) {
 				throw new IllegalStateException("Service was null");
 			}
 			try {
-				service.remove(obj);
+				sellerService.remove(obj);
 				updateTableView();
 			} catch (DbIntegrityException e) {
 				Alerts.showAlert("Error removing Obj", null, e.getMessage(), AlertType.ERROR);
