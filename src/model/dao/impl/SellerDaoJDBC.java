@@ -32,7 +32,7 @@ public class SellerDaoJDBC implements SellerDao{
 		try {
 			st = conn.prepareStatement(
 					"INSERT INTO seller "
-					+"(name, email, birthdate, basesalary, departmentid) "
+					+"(name, email, birthdate, basesalary, departamentid) "
 					+ "VALUES"
 					+ "(?,?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
@@ -73,7 +73,7 @@ public class SellerDaoJDBC implements SellerDao{
 		try {
 			st = conn.prepareStatement(
 					"UPDATE seller "
-					+ "SET name = ?, email = ?, birthdate = ?, basesalary = ?, departmentid = ? "
+					+ "SET name = ?, email = ?, birthdate = ?, basesalary = ?, departamentid = ? "
 				    + "WHERE id = ?");
 			
 			
@@ -134,7 +134,7 @@ public class SellerDaoJDBC implements SellerDao{
 			rs = st.executeQuery();
 			
 			if(rs.next()) {
-				Departament dep = instantiateDepartment(rs);
+				Departament dep = instantiateDepartament(rs);
 				
 				Seller obj = instantiateSeller(rs, dep);
 				
@@ -164,7 +164,7 @@ public class SellerDaoJDBC implements SellerDao{
 	}
 
 
-	private Departament instantiateDepartment(ResultSet rs) throws SQLException {
+	private Departament instantiateDepartament(ResultSet rs) throws SQLException {
 		Departament dep = new Departament();
 		dep.setId(rs.getInt("departamentid"));
 		dep.setName(rs.getString("depname"));
@@ -195,7 +195,7 @@ public class SellerDaoJDBC implements SellerDao{
 				
 				if (dep ==null ) {
 				
-					dep = instantiateDepartment(rs);
+					dep = instantiateDepartament(rs);
 					map.put(rs.getInt("departamentid"), dep);
 				}
 				
@@ -217,18 +217,18 @@ public class SellerDaoJDBC implements SellerDao{
 
 
 	@Override
-	public List<Seller> findByDepartment(Departament department) {
+	public List<Seller> findByDepartament(Departament departament) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"SELECT seller.*, department.Name as DepName "
-					+ "FROM seller INNER JOIN department "
-					+ "ON seller.departmentid = department.id "
-					+ "WHERE departmentid = ? "
+					"SELECT seller.*, departament.Name as DepName "
+					+ "FROM seller INNER JOIN departament "
+					+ "ON seller.departamentid = departament.id "
+					+ "WHERE departamentid = ? "
 					+ "ORDER BY name");
 			
-			st.setInt(1, department.getId());
+			st.setInt(1, departament.getId());
 			rs = st.executeQuery();
 			
 			List<Seller> list = new ArrayList<>();
@@ -237,12 +237,12 @@ public class SellerDaoJDBC implements SellerDao{
 			while (rs.next()) {
 				
 				// verifica se o map já  possui um departmentid
-				Departament dep = map.get(rs.getInt("departmentid"));
+				Departament dep = map.get(rs.getInt("departamentid"));
 				
 				if (dep ==null ) {
 				
-					dep = instantiateDepartment(rs);
-					map.put(rs.getInt("departmentid"), dep);
+					dep = instantiateDepartament(rs);
+					map.put(rs.getInt("departamentid"), dep);
 				}
 				
 				Seller obj = instantiateSeller(rs, dep);
