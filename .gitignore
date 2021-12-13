@@ -8,6 +8,9 @@ dist/
 nbdist/
 
 
+#Eclipse
+.settings/
+
 # Compiled class file
 *.class
 
